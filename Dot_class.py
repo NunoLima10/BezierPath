@@ -27,6 +27,6 @@ class Dot:
         deltaY = (self.position[1] - position[1]) ** 2
 
         return self.radius > (deltaX + deltaY) ** 0.5
-    def update(self, surface):
+    def draw(self, surface):
         pygame.draw.circle(surface,self.color,self.position,self.radius)
     

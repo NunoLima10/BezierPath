@@ -4,7 +4,7 @@
 import pygame, sys
 
 from Dot_class import Dot
-from dots_suporte import dots_update, mouse_clik
+from dots_suporte import dots_update, draw_dots_lines, mouse_clik
 
 pygame.init()
 
@@ -18,14 +18,19 @@ pygame.display.set_caption('Bezier Curves')
 
 
 def main():
-    dots =[Dot((i*100,350),DOT_COLOR,10) for i in range(4)]
+    dots ={
+        "P0":Dot((200,350),DOT_COLOR,10),
+        "P1":Dot((400,200),DOT_COLOR,5),
+        "P2":Dot((600,350),DOT_COLOR,10)
+    }
+    
 
     while True:
         CLOCK.tick(FPS)
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 exit()
-                
+
             mouse_clik(event,dots,pygame.mouse.get_pos())
             
         try:
@@ -34,7 +39,8 @@ def main():
             pass
 
         screen.fill(BG_COLOR)
-        dots = dots_update(dots,screen,mouse_position)
+        draw_dots_lines(dots, screen)
+        dots = dots_update(dots, screen, mouse_position)
     
     
         pygame.display.update()
