@@ -1,7 +1,9 @@
 
 
+
 import pygame, sys
 from pygame.constants import MOUSEBUTTONDOWN
+from Dot import Dot
 
 pygame.init()
 
@@ -13,6 +15,7 @@ CLOCK = pygame.time.Clock()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Bezier Curves')
 
+dot = Dot((100,100),DOT_COLOR,10)
 
 def main():
     while True:
@@ -23,9 +26,28 @@ def main():
             if event.type==MOUSEBUTTONDOWN:
                 if event.button==1:
                     clique=True
+
+        try:
+            mouse_position = pygame.mouse.get_pos()
+        except:
+            pass
+
+        if dot.position_is_in(mouse_position):
+            dot.set_color((0,255,0))
+            dot.set_position(mouse_position)
+        else:
+            dot.set_defaut_color()
+
         screen.fill(BG_COLOR)
+        dot.update(screen)
+       
+
+
+
+
         pygame.display.update()
     
+
 
 
 
