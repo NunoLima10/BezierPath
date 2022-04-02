@@ -4,7 +4,7 @@
 import pygame, sys
 
 from Dot_class import Dot
-from dots_suporte import dots_update, draw_dots_lines, mouse_clik
+from dots_suporte import dots_update, draw_quadratic_bezierlines, mouse_clik,draw_cubic_bezierlines
 
 pygame.init()
 
@@ -18,11 +18,20 @@ pygame.display.set_caption('Bezier Curves')
 
 
 def main():
-    dots ={
-        "P0":Dot((200,350),DOT_COLOR,10),
-        "P1":Dot((400,200),DOT_COLOR,5),
-        "P2":Dot((600,350),DOT_COLOR,10)
+    dots_quadratic_bezier = {
+        "P0":Dot((200,250),DOT_COLOR,10),
+        "P1":Dot((400,100),DOT_COLOR,5),
+        "P2":Dot((600,250),DOT_COLOR,10)
     }
+
+    dots_cubic_bezier = {
+        "P0":Dot((200,450),DOT_COLOR,10),
+        "P1":Dot((400,300),DOT_COLOR,5),
+        "P2":Dot((600,450),DOT_COLOR,5),
+        "P3":Dot((600,550),DOT_COLOR,10)
+
+    }
+
     
 
     while True:
@@ -31,7 +40,8 @@ def main():
             if event.type==pygame.QUIT:
                 exit()
 
-            mouse_clik(event,dots,pygame.mouse.get_pos())
+            mouse_clik(event,dots_quadratic_bezier,pygame.mouse.get_pos())
+            mouse_clik(event,dots_cubic_bezier,pygame.mouse.get_pos())
             
         try:
             mouse_position = pygame.mouse.get_pos()
@@ -39,8 +49,12 @@ def main():
             pass
 
         screen.fill(BG_COLOR)
-        draw_dots_lines(dots, screen)
-        dots = dots_update(dots, screen, mouse_position)
+        draw_quadratic_bezierlines(dots_quadratic_bezier, screen)
+        dots_quadratic_bezier = dots_update(dots_quadratic_bezier, screen, mouse_position)
+
+        draw_cubic_bezierlines(dots_cubic_bezier, screen)
+        dots_cubic_bezier = dots_update(dots_cubic_bezier, screen, mouse_position)
+
     
     
         pygame.display.update()
