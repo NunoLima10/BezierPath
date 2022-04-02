@@ -8,7 +8,10 @@ class Dot:
         self.color = color
         self.defaut_color = color
         self.radius = radius
+        self.over = False
 
+    def set_over(self,state) -> None:
+        self.over = state
 
     def set_color(self, color) -> None:
         self.color = color
@@ -16,7 +19,8 @@ class Dot:
         self.color = self.defaut_color  
 
     def set_position(self, position) -> None:
-        if position != self.position: self.position = position    
+        #if position != self.position: self.position = position
+        self.position = position    
 
     def position_is_in(self, position) -> bool:
         deltaX = (self.position[0] - position[0]) ** 2
