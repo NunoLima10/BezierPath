@@ -1,12 +1,11 @@
 
-
-
 import pygame, sys
+from bezier_cuve import BezierCuve
+from button import Button
 
-from Dot_class import Dot
-from dots_suporte import dots_update, draw_quadratic_bezierlines, mouse_clik,draw_cubic_bezierlines
-
+from pygame.constants import MOUSEBUTTONDOWN,MOUSEBUTTONUP
 pygame.init()
+pygame.font.init()
 
 WIDTH, HEIGHT = 1000,700
 BG_COLOR = (128, 128, 128)
@@ -17,22 +16,14 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Bezier Curves')
 
 
+
 def main():
-    dots_quadratic_bezier = {
-        "P0":Dot((200,250),DOT_COLOR,10),
-        "P1":Dot((400,100),DOT_COLOR,5),
-        "P2":Dot((600,250),DOT_COLOR,10)
-    }
 
-    dots_cubic_bezier = {
-        "P0":Dot((200,450),DOT_COLOR,10),
-        "P1":Dot((400,300),DOT_COLOR,5),
-        "P2":Dot((600,450),DOT_COLOR,5),
-        "P3":Dot((600,550),DOT_COLOR,10)
+    button = Button("aaaaa",(50,50),(20,20))
+    bezier_cuve2 = BezierCuve(2,DOT_COLOR,(255,255,255))
+    bezier_cuve3 = BezierCuve(3,DOT_COLOR,(255,255,255))
 
-    }
-
-    
+    show_guidelines = True
 
     while True:
         CLOCK.tick(FPS)
@@ -40,8 +31,14 @@ def main():
             if event.type==pygame.QUIT:
                 exit()
 
-            mouse_clik(event,dots_quadratic_bezier,pygame.mouse.get_pos())
-            mouse_clik(event,dots_cubic_bezier,pygame.mouse.get_pos())
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:  
+                    if button.contact(pygame.mouse.get_pos()):
+                        show_guidelines = False if show_guidelines else True
+
+            bezier_cuve2.mouse_trigger(event, pygame.mouse.get_pos())
+            bezier_cuve3.mouse_trigger(event, pygame.mouse.get_pos())
+
             
         try:
             mouse_position = pygame.mouse.get_pos()
@@ -49,19 +46,13 @@ def main():
             pass
 
         screen.fill(BG_COLOR)
-        draw_quadratic_bezierlines(dots_quadratic_bezier, screen)
-        dots_quadratic_bezier = dots_update(dots_quadratic_bezier, screen, mouse_position)
+        button.draw_button(screen)
+        bezier_cuve2.update(screen,mouse_position,0.01,show_guidelines)
+        bezier_cuve3.update(screen,mouse_position,0.01,show_guidelines)
 
-        draw_cubic_bezierlines(dots_cubic_bezier, screen)
-        dots_cubic_bezier = dots_update(dots_cubic_bezier, screen, mouse_position)
+        
 
-    
-    
         pygame.display.update()
-      
-    
-
-
 
 
 if __name__ == "__main__":
