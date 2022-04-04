@@ -1,7 +1,7 @@
 
 import pygame, sys
 from bezier_cuve import BezierCuve
-from button import Button
+from radioButton import RadioButton
 
 from pygame.constants import MOUSEBUTTONDOWN,MOUSEBUTTONUP
 pygame.init()
@@ -19,9 +19,9 @@ pygame.display.set_caption('Bezier Curves')
 
 def main():
 
-    button = Button("aaaaa",(50,50),(20,20))
-    bezier_cuve2 = BezierCuve(2,DOT_COLOR,(255,255,255))
-    bezier_cuve3 = BezierCuve(3,DOT_COLOR,(255,255,255))
+    button = RadioButton((30,30), (255,255,255), 12, "Guidelines")
+    bezier_cuve2 = BezierCuve(2, DOT_COLOR, (255,255,255))
+    bezier_cuve3 = BezierCuve(3, DOT_COLOR, (255,255,255))
 
     show_guidelines = True
 
@@ -33,8 +33,9 @@ def main():
 
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:  
-                    if button.contact(pygame.mouse.get_pos()):
+                    if button.is_on_focus(pygame.mouse.get_pos()):
                         show_guidelines = False if show_guidelines else True
+                        button.set_state(show_guidelines)
 
             bezier_cuve2.mouse_trigger(event, pygame.mouse.get_pos())
             bezier_cuve3.mouse_trigger(event, pygame.mouse.get_pos())
@@ -47,6 +48,8 @@ def main():
 
         screen.fill(BG_COLOR)
         button.draw_button(screen)
+        button.is_on_focus(pygame.mouse.get_pos())
+
         bezier_cuve2.update(screen,mouse_position,0.01,show_guidelines)
         bezier_cuve3.update(screen,mouse_position,0.01,show_guidelines)
 

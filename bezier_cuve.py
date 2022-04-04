@@ -97,7 +97,7 @@ class BezierCuve:
             point1 = func(self.dots,t)
             point2 = func(self.dots,t_next)
 
-            pygame.draw.line(surface,(255,255,255),point1,point2)
+            pygame.draw.line(surface,(255,255,255,5),point1,point2)
             t+=0.01
             t_next+=0.01 
 
