@@ -1,7 +1,7 @@
-from dot import Dot
 
 import pygame
 from pygame.constants import MOUSEBUTTONDOWN,MOUSEBUTTONUP
+from dot import Dot
 
 class BezierCuve:
     def __init__(self, order:int, dot_color: tuple, line_color:tuple) -> None:
@@ -30,21 +30,19 @@ class BezierCuve:
             }
 
     def mouse_trigger(self, event, mouse_position) -> None:
-        if event.type == MOUSEBUTTONDOWN:
-         if event.button == 1:
-                for dot in self.dots.values():
-                    if dot.position_is_in(mouse_position):
-                        dot.set_over(True)
+        if event.type == MOUSEBUTTONDOWN and event.button == 1:
+            for dot in self.dots.values():
+                if dot.is_on_focus(mouse_position):
+                    dot.set_over(True)
         
-        if event.type == MOUSEBUTTONUP:
-            if event.button == 1:
-             for dot in self.dots.values():
-                if dot.position_is_in(mouse_position):
+        if event.type == MOUSEBUTTONUP and event.button == 1:
+            for dot in self.dots.values():
+                if dot.is_on_focus(mouse_position):
                     dot.set_over(False)
 
-    def dot_update(self,surface, mouse_position) -> None:
+    def dot_update(self, surface, mouse_position) -> None:
         for dot in self.dots.values():
-            if dot.position_is_in(mouse_position) and not dot.over:
+            if dot.is_on_focus(mouse_position) and not dot.over:
                 dot.set_color((0,255,0))    
             elif dot.over:
                 dot.set_color((255,0,0))
@@ -55,14 +53,14 @@ class BezierCuve:
     
     def quadratic_bezier_guidelines(self, surface) -> None:
         if self.is_quadratic:
-            pygame.draw.line(surface,(0,255,0),self.dots["P0"].position,self.dots["P1"].position)
-            pygame.draw.line(surface,(0,255,0),self.dots["P2"].position,self.dots["P1"].position)
+            pygame.draw.line(surface, (0,255,0), self.dots["P0"].position, self.dots["P1"].position)
+            pygame.draw.line(surface, (0,255,0), self.dots["P2"].position, self.dots["P1"].position)
 
     def cubic_bezier_guidelines(self, surface) -> None:
         if  not self.is_quadratic: 
-            pygame.draw.line(surface,(0,255,0),self.dots["P0"].position,self.dots["P1"].position)
-            pygame.draw.line(surface,(0,255,0),self.dots["P1"].position,self.dots["P2"].position)
-            pygame.draw.line(surface,(0,255,0),self.dots["P2"].position,self.dots["P3"].position) 
+            pygame.draw.line(surface, (0,255,0), self.dots["P0"].position, self.dots["P1"].position)
+            pygame.draw.line(surface, (0,255,0), self.dots["P1"].position, self.dots["P2"].position)
+            pygame.draw.line(surface, (0,255,0), self.dots["P2"].position, self.dots["P3"].position) 
 
     def quadratic_bezier(self,dots,t):
         pos_P0 = dots["P0"].position
@@ -85,25 +83,26 @@ class BezierCuve:
 
         return [x_final,y_final]
 
-    def draw_bezier_cuve(self, surface, t_increment,show_guidelines) -> None:
+    def draw_bezier_cuve(self, surface, t_max, show_guidelines) -> None:
         if show_guidelines:
             self.quadratic_bezier_guidelines(surface)
             self.cubic_bezier_guidelines(surface)
-        
+            
         func = self.quadratic_bezier if self.is_quadratic else self.cubic_bezier
         t = 0
-        t_next = t_increment
-        while(1 > t_next):
+        t_next = 0.01
+        while(t_max > t_next):
             point1 = func(self.dots,t)
             point2 = func(self.dots,t_next)
 
-            pygame.draw.line(surface,(255,255,255,5),point1,point2)
-            t+=0.01
-            t_next+=0.01 
+            pygame.draw.line(surface,(self.line_color),point1,point2)
+            t += 0.01
+            t_next += 0.01
+          
 
-    def update(self,surface, mouse_position,t_increment,show_guidelines) -> None:
-         self.draw_bezier_cuve(surface,t_increment,show_guidelines)
-         self.dot_update(surface,mouse_position)
+    def update(self, surface, mouse_position, t_max, show_guidelines) -> None:
+         self.draw_bezier_cuve(surface, t_max, show_guidelines)
+         self.dot_update(surface, mouse_position)
 
 
 

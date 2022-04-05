@@ -4,6 +4,8 @@ from bezier_cuve import BezierCuve
 from radioButton import RadioButton
 
 from pygame.constants import MOUSEBUTTONDOWN,MOUSEBUTTONUP
+
+from slider import Slider
 pygame.init()
 pygame.font.init()
 
@@ -19,11 +21,11 @@ pygame.display.set_caption('Bezier Curves')
 
 def main():
 
-    button = RadioButton((30,30), (255,255,255), 12, "Guidelines")
+    radio_button = RadioButton((30,30), (255,255,255), 12, "Guidelines")
+    slider = Slider((18,60),(200,10),(255,255,255),1,"t = ")
+
     bezier_cuve2 = BezierCuve(2, DOT_COLOR, (255,255,255))
     bezier_cuve3 = BezierCuve(3, DOT_COLOR, (255,255,255))
-
-    show_guidelines = True
 
     while True:
         CLOCK.tick(FPS)
@@ -31,29 +33,24 @@ def main():
             if event.type==pygame.QUIT:
                 exit()
 
-            if event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:  
-                    if button.is_on_focus(pygame.mouse.get_pos()):
-                        show_guidelines = False if show_guidelines else True
-                        button.set_state(show_guidelines)
-
-            bezier_cuve2.mouse_trigger(event, pygame.mouse.get_pos())
-            bezier_cuve3.mouse_trigger(event, pygame.mouse.get_pos())
-
-            
-        try:
             mouse_position = pygame.mouse.get_pos()
-        except:
-            pass
 
+            radio_button.mouse_trigger(event, mouse_position)
+            slider.mouse_trigger(event, mouse_position)        
+            bezier_cuve2.mouse_trigger(event, mouse_position)
+            bezier_cuve3.mouse_trigger(event, mouse_position)
+
+        mouse_position = pygame.mouse.get_pos()
         screen.fill(BG_COLOR)
-        button.draw_button(screen)
-        button.is_on_focus(pygame.mouse.get_pos())
 
-        bezier_cuve2.update(screen,mouse_position,0.01,show_guidelines)
-        bezier_cuve3.update(screen,mouse_position,0.01,show_guidelines)
+        radio_button.update(screen,mouse_position)
+        show_guidelines = radio_button.get_state()
 
-        
+        slider.update(screen,mouse_position)
+        t_max = slider.get_swiper_percentage()
+       
+        bezier_cuve2.update(screen,mouse_position,t_max,show_guidelines)
+        bezier_cuve3.update(screen,mouse_position,t_max,show_guidelines)
 
         pygame.display.update()
 
