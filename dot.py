@@ -8,7 +8,10 @@ class Dot:
         self.color = color
         self.defaut_color = color
         self.radius = radius
+
         self.over = False
+        self.on_focus = False
+
 
     def set_over(self,state) -> None:
         self.over = state
@@ -26,8 +29,9 @@ class Dot:
         deltaX = (self.position[0] - position[0]) ** 2
         deltaY = (self.position[1] - position[1]) ** 2
 
-        return self.radius > (deltaX + deltaY) ** 0.5
+        self.on_focus = self.radius > (deltaX + deltaY) ** 0.5
 
-    def draw(self, surface):
+    def update(self, surface, mouse_position):
         pygame.draw.circle(surface,self.color,self.position,self.radius)
+        self.is_on_focus(mouse_position)
     

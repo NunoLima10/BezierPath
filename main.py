@@ -37,8 +37,8 @@ def main():
             radio_button.mouse_trigger(event)
             slider_t.mouse_trigger(event)
             slider_q.mouse_trigger(event)        
-            bezier_cuve2.mouse_trigger(event, mouse_position)
-            bezier_cuve3.mouse_trigger(event, mouse_position)
+            bezier_cuve2.mouse_trigger(event)
+            bezier_cuve3.mouse_trigger(event)
 
         mouse_position = pygame.mouse.get_pos()
         screen.fill(BG_COLOR)

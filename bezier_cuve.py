@@ -14,39 +14,37 @@ class BezierCuve:
 
         if self.is_quadratic: 
             self.dots = {
-                "P0":Dot((200,300),self.dot_color,10),
-                "P1":Dot((300,200),self.dot_color,5),
-                "P2":Dot((400,300),self.dot_color,10)
+                "P0":Dot((200,300),self.dot_color,8),
+                "P1":Dot((300,200),(200,200,200),5),
+                "P2":Dot((400,300),self.dot_color,8)
                 }
         else: 
             self.dots = {
-            "P0":Dot((200,600),self.dot_color,10),
-            "P1":Dot((300,500),self.dot_color,5),
-            "P2":Dot((600,500),self.dot_color,5),
-            "P3":Dot((600,600),self.dot_color,10)
+            "P0":Dot((200,600),self.dot_color,8),
+            "P1":Dot((300,500),(200,200,200),5),
+            "P2":Dot((600,500), (200,200,200),5),
+            "P3":Dot((600,600),self.dot_color,8)
             }
 
-    def mouse_trigger(self, event, mouse_position) -> None:
+    def mouse_trigger(self, event) -> None:
         if event.type == MOUSEBUTTONDOWN and event.button == 1:
             for dot in self.dots.values():
-                if dot.is_on_focus(mouse_position):
-                    dot.set_over(True)
+                if dot.on_focus : dot.set_over(True)
         
         if event.type == MOUSEBUTTONUP and event.button == 1:
             for dot in self.dots.values():
-                if dot.is_on_focus(mouse_position):
-                    dot.set_over(False)
+                if dot.on_focus:dot.set_over(False)
 
-    def dot_update(self, surface, mouse_position) -> None:
+    def dots_update(self, surface, mouse_position) -> None:
         for dot in self.dots.values():
-            if dot.is_on_focus(mouse_position) and not dot.over:
+            if dot.on_focus and not dot.over:
                 dot.set_color((0,255,0))    
             elif dot.over:
                 dot.set_color((255,0,0))
                 dot.set_position(mouse_position)
             else:
                 dot.set_defaut_color() 
-            dot.draw(surface)   
+            dot.update(surface, mouse_position)   
     
     def quadratic_bezier_guidelines(self, surface) -> None:
         if self.is_quadratic:
@@ -86,9 +84,9 @@ class BezierCuve:
             self.cubic_bezier_guidelines(surface)
             
         func = self.quadratic_bezier if self.is_quadratic else self.cubic_bezier
-        Q = 0.05 if Q < 0.05 else Q
+        Q = 0.01 if Q <= 0.0 else Q
         t = 0
-        t_next = Q
+        t_next =Q
         while(t_max > t_next):
             point1 = func(self.dots,t)
             point2 = func(self.dots,t_next)
@@ -100,7 +98,7 @@ class BezierCuve:
 
     def update(self, surface, mouse_position, t_max, Q, show_guidelines) -> None:
          self.draw_bezier_cuve(surface, t_max, Q, show_guidelines)
-         self.dot_update(surface, mouse_position)
+         self.dots_update(surface, mouse_position)
 
 
 
