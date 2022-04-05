@@ -37,13 +37,12 @@ class Slider:
       self.over = False
       self.on_focus = False
 
-    def mouse_trigger(self, event, mouse_position) -> None:
+    def mouse_trigger(self, event) -> None:
         if event.type == MOUSEBUTTONDOWN and event.button == 1:
            if self.on_focus: self.over = True
           
-
         if event.type == MOUSEBUTTONUP and event.button == 1:
-              if self.on_focus: self.over = not self.over
+             self.over = False
             
      
     def is_on_focus(self, position) -> bool:
@@ -84,6 +83,8 @@ class Slider:
      self.draw(surface)
      self.is_on_focus(mouse_position)
      self.swiper_percentage = (self.swiper_position [0] - self.out_line_position[0] - self.out_line_size[0]  / self.out_line_size[0] ) / self.out_line_size[0] 
+     self.swiper_percentage = 1 if self.swiper_percentage > 0.940 else  self.swiper_percentage
+     self.swiper_percentage = 0 if self.swiper_percentage < 0.05 else  self.swiper_percentage
       
      
 

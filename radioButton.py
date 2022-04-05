@@ -30,7 +30,7 @@ class RadioButton:
         self.selected = True
         self.label_is_visibel = True
 
-    def mouse_trigger(self, event, mouse_position) -> None:
+    def mouse_trigger(self, event) -> None:
         if event.type == MOUSEBUTTONDOWN and event.button == 1:
          if self.on_focus: self.selected = not self.selected
    
