@@ -3,6 +3,7 @@ import pygame, sys
 from bezier_cuve import BezierCuve
 from radioButton import RadioButton
 from slider import Slider
+from bezier_path import BezierPath
 
 pygame.init()
 pygame.font.init()
@@ -23,8 +24,11 @@ def main():
     slider_t = Slider((18,60), (200,10), (255,255,255) ,1, "t =")
     slider_q = Slider((18,120), (200,10), (255,255,255), 0.05, "Q =")
 
-    bezier_cuve2 = BezierCuve(2, DOT_COLOR, (255,255,255))
-    bezier_cuve3 = BezierCuve(3, DOT_COLOR, (255,255,255))
+    bezier_path = BezierPath(DOT_COLOR, DOT_COLOR)
+
+
+    #bezier_cuve2 = BezierCuve(2, DOT_COLOR, (255,255,255))
+    #bezier_cuve3 = BezierCuve(3, DOT_COLOR, (255,255,255))
 
     while True:
         CLOCK.tick(FPS)
@@ -36,9 +40,11 @@ def main():
 
             radio_button.mouse_trigger(event)
             slider_t.mouse_trigger(event)
-            slider_q.mouse_trigger(event)        
-            bezier_cuve2.mouse_trigger(event)
-            bezier_cuve3.mouse_trigger(event)
+            slider_q.mouse_trigger(event)
+            bezier_path.mouse_trigger(event)
+
+            #bezier_cuve2.mouse_trigger(event)
+            #bezier_cuve3.mouse_trigger(event)
 
         mouse_position = pygame.mouse.get_pos()
         screen.fill(BG_COLOR)
@@ -53,9 +59,11 @@ def main():
         slider_q.update(screen,mouse_position)
         Q = slider_q.get_swiper_percentage() 
         
-       
-        bezier_cuve2.update(screen,mouse_position,t_max,Q,show_guidelines)
-        bezier_cuve3.update(screen,mouse_position,t_max,Q,show_guidelines)
+        bezier_path.update(screen,mouse_position)
+
+
+        #bezier_cuve2.update(screen,mouse_position,t_max,Q,show_guidelines)
+        #bezier_cuve3.update(screen,mouse_position,t_max,Q,show_guidelines)
 
         pygame.display.update()
 
