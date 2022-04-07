@@ -5,6 +5,7 @@ from radioButton import RadioButton
 from slider import Slider
 from bezier_path import BezierPath
 
+
 pygame.init()
 pygame.font.init()
 
@@ -25,6 +26,7 @@ def main():
     slider_q = Slider((18,120), (200,10), (255,255,255), 0.05, "Q =")
 
     bezier_path = BezierPath(DOT_COLOR, DOT_COLOR)
+    Ctrl_key_state = False
 
 
     #bezier_cuve2 = BezierCuve(2, DOT_COLOR, (255,255,255))
@@ -36,12 +38,33 @@ def main():
             if event.type==pygame.QUIT:
                 exit()
 
-            mouse_position = pygame.mouse.get_pos()
+            if event.type == pygame.KEYDOWN and pygame.K_LCTRL: 
+                Ctrl_key_state = True 
+
+            if event.type == pygame.KEYUP and event.key == pygame.K_LCTRL:
+                Ctrl_key_state = False
+
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                if Ctrl_key_state:
+                     mouse_position = pygame.mouse.get_pos()
+                     bezier_path.add_dot(mouse_position)
+
+
+
+           
+            
 
             radio_button.mouse_trigger(event)
             slider_t.mouse_trigger(event)
             slider_q.mouse_trigger(event)
             bezier_path.mouse_trigger(event)
+
+
+
+
+
+
+
 
             #bezier_cuve2.mouse_trigger(event)
             #bezier_cuve3.mouse_trigger(event)
