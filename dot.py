@@ -4,7 +4,7 @@ import pygame
 class Dot:
     def __init__(self,position:tuple, color:tuple, radius:int) -> None:
         super().__init__()
-        self.position_x,self.position_y = position
+        self.position_x, self.position_y = position
         self.position = position
         self.radius = radius
 
@@ -39,7 +39,7 @@ class Dot:
 
         self.on_focus = self.radius > (deltaX + deltaY) ** 0.5
 
-    def update(self, surface, mouse_position):
-        pygame.draw.circle(surface, self.color,(self.position), self.radius)
+    def update(self, surface, mouse_position,show_dots):
+        if show_dots:pygame.draw.circle(surface, self.color,(self.position), self.radius)
         self.is_on_focus(mouse_position)
     

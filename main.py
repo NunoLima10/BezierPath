@@ -9,7 +9,7 @@ from bezier_path import BezierPath
 pygame.init()
 pygame.font.init()
 
-WIDTH, HEIGHT = 1000,700
+WIDTH, HEIGHT = 1080,720
 BG_COLOR = (128, 128, 128)
 DOT_COLOR=(230,230,230)
 FPS = 60
@@ -22,11 +22,14 @@ pygame.display.set_caption('Bezier Curves')
 def main():
 
     radio_button = RadioButton((30,30), (255,255,255), 12, "Guidelines")
-    slider_t = Slider((18,60), (200,10), (255,255,255) ,1, "t =")
-    slider_q = Slider((18,120), (200,10), (255,255,255), 0.05, "Q =")
+    radio_button2 = RadioButton((30,70), (255,255,255), 12, "Dots")
+
+    slider_t = Slider((18,100), (200,10), (255,255,255) ,1, "t =")
+    slider_q = Slider((18,130), (200,10), (255,255,255), 0.05, "Q =")
 
     bezier_path = BezierPath(DOT_COLOR, DOT_COLOR)
     Ctrl_key_state = False
+    show_guidelines = False
 
 
     #bezier_cuve2 = BezierCuve(2, DOT_COLOR, (255,255,255))
@@ -49,22 +52,11 @@ def main():
                      mouse_position = pygame.mouse.get_pos()
                      bezier_path.add_dot(mouse_position)
 
-
-
-           
-            
-
             radio_button.mouse_trigger(event)
+            radio_button2.mouse_trigger(event)
             slider_t.mouse_trigger(event)
             slider_q.mouse_trigger(event)
             bezier_path.mouse_trigger(event)
-
-
-
-
-
-
-
 
             #bezier_cuve2.mouse_trigger(event)
             #bezier_cuve3.mouse_trigger(event)
@@ -75,14 +67,18 @@ def main():
         radio_button.update(screen,mouse_position)
         show_guidelines = radio_button.get_state()
 
+        radio_button2.update(screen,mouse_position)
+        show_dots = radio_button2.get_state()
+
         slider_t.update(screen,mouse_position)
         t_max = slider_t.get_swiper_percentage()
 
 
         slider_q.update(screen,mouse_position)
         Q = slider_q.get_swiper_percentage() 
+        Q = 0.01 if Q <=0 else Q 
         
-        bezier_path.update(screen,mouse_position)
+        bezier_path.update(screen, mouse_position, t_max, Q, show_guidelines,show_dots)
 
 
         #bezier_cuve2.update(screen,mouse_position,t_max,Q,show_guidelines)

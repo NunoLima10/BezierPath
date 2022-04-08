@@ -1,1 +1,1 @@
-get_swiper_percentage()
+show_guidelines
