@@ -36,10 +36,10 @@ class RadioButton:
    
 
     def is_on_focus(self, position) -> bool:
-        deltaX = (self.position[0] - position[0]) ** 2
-        deltaY = (self.position[1] - position[1]) ** 2
+        deltaX = (self.position[0] - position[0])**2
+        deltaY = (self.position[1] - position[1])**2
 
-        self.on_focus = self.radius > (deltaX + deltaY) ** 0.5 
+        self.on_focus = self.radius > (deltaX + deltaY)**0.5 
         return self.on_focus
 
     def draw_label(self, surface) -> None:

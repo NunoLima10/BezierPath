@@ -46,9 +46,9 @@ class Slider:
             
      
     def is_on_focus(self, position) -> bool:
-        deltaX = (self.swiper_position[0] - position[0]) ** 2
-        deltaY = (self.swiper_position[1] - position[1]) ** 2
-        self.on_focus = self.swiper_radis > (deltaX + deltaY) ** 0.5
+        deltaX = (self.swiper_position[0] - position[0])**2
+        deltaY = (self.swiper_position[1] - position[1])**2
+        self.on_focus = self.swiper_radis > (deltaX + deltaY)**0.5
 
     def set_swiper_position(self, position) -> None:
         if self.over:

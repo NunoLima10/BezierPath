@@ -6,8 +6,12 @@ from math import floor
 
 
 class BezierPath:
-    def __init__(self, dot_color:tuple, line_color:tuple) -> None:
+    def __init__(self,start_position:tuple, dot_color:tuple, line_color:tuple, max_Width:int, max_height) -> None:
         super().__init__()
+
+        #screen
+        self.max_width = max_Width
+        self.max_height = max_height
 
         #dot
         self.dot_color = dot_color
@@ -21,15 +25,12 @@ class BezierPath:
         self.cotrole_dot_over_color = (255,0,0)
         self.controle_dot_radis = 5
 
-        #line
+        #bezier_path
         self.line_color = line_color
         self.bezier_path = []
 
-        self.dots = [
-            Dot((200,200), self.dot_color, self.dot_radis)
-
-        ]
-        self.number_of_dots = len( self.dots)
+        self.dots = [Dot(start_position, self.dot_color, self.dot_radis)]
+        self.number_of_dots = 1
 
     def mouse_trigger(self, event) -> None:
         if event.type == MOUSEBUTTONDOWN and event.button == 1:
@@ -51,43 +52,69 @@ class BezierPath:
                 dot.set_defaut_color() 
             dot.update(surface, mouse_position,show_dots)
 
+    def add_dots(self,mouse_position, controle_dot1_position,controle_dot2_position)-> None:
 
-    def add_dot(self,mouse_position,) -> None:
+        controle_dot1 = Dot(controle_dot1_position, self.cotrole_dot_color, self.controle_dot_radis)
+        controle_dot2 = Dot(controle_dot2_position, self.cotrole_dot_color, self.controle_dot_radis)
+        dot = Dot(mouse_position, self.dot_color, self.dot_radis)
+
+        self.dots.append(controle_dot1)
+        self.dots.append(controle_dot2)
+        self.dots.append(dot)
+
+    def limit_to_screen_size(self,position_x, position_y) -> tuple:
+
+        if position_x >= self.max_width : position_x = self.max_width - self.controle_dot_radis - 5 
+        if position_x <= 0 : position_x = self.dot_radis + 5 
+
+        if position_y >= self.max_height : position_y = self.max_height - self.dot_radis - 5 
+        if position_y <= 0 : position_y =self.dot_radis + 5 
+
+        return (position_x, position_y)   
+
+
+    def generate_new_dot(self,mouse_position,) -> None:
+        for dot in self.dots: 
+            if dot.on_focus : return
+        
         if self.number_of_dots == 1:
             firt_dot = self.dots[0]
-            controle_dot1 = Dot((firt_dot.position_x,firt_dot.position_y - 100), self.cotrole_dot_color, self.controle_dot_radis)
-            controle_dot2 =Dot((mouse_position[0],mouse_position[1] - 100), self.cotrole_dot_color, self.controle_dot_radis)
-            dot = Dot(mouse_position, self.dot_color, self.dot_radis)
+            #firts controle dot
+            controle_dot1_position_x = firt_dot.position_x 
+            controle_dot1_position_y = firt_dot.position_y - 100 
+            controle_dot1_position = self.limit_to_screen_size(controle_dot1_position_x, controle_dot1_position_y)
+            #second controle dot
+            controle_dot2_position_x = mouse_position[0]
+            controle_dot2_position_y = mouse_position[1] - 100
+            controle_dot2_position = self.limit_to_screen_size(controle_dot2_position_x, controle_dot2_position_y)
 
-            self.dots.append(controle_dot1)
-            self.dots.append(controle_dot2)
-            self.dots.append(dot)
+            self.add_dots(mouse_position,controle_dot1_position, controle_dot2_position)   
         else:
             last_dot = self.dots[-1]
             last_controle_dot =  self.dots[-2]
-
             #firts controle dot
-            controle_dot1_position_x = last_dot.position_x + abs(last_dot.position_x - last_controle_dot.position_x) 
-            controle_dot1_position_y = last_dot.position_y + abs(last_dot.position_y - last_controle_dot.position_y)
-            controle_dot1 = Dot((controle_dot1_position_x,controle_dot1_position_y), self.cotrole_dot_color, self.controle_dot_radis)
-
-            #second dot
+            controle_dot1_position_x = last_dot.position_x + last_dot.position_x - last_controle_dot.position_x
+            controle_dot1_position_y = last_dot.position_y + last_dot.position_y - last_controle_dot.position_y
+            controle_dot1_position = self.limit_to_screen_size(controle_dot1_position_x, controle_dot1_position_y)
+            #second controle dot
             controle_dot2_position_x = floor(2*mouse_position[0] - abs(mouse_position[0] + last_controle_dot.position_x) / 2)
             controle_dot2_position_y = floor(2*mouse_position[1] - abs(mouse_position[1] + last_controle_dot.position_y) / 2 )
-            controle_dot2 =Dot((controle_dot2_position_x,controle_dot2_position_y), self.cotrole_dot_color, self.controle_dot_radis)
+            controle_dot2_position = self.limit_to_screen_size(controle_dot2_position_x, controle_dot2_position_y)
 
+            self.add_dots(mouse_position,controle_dot1_position, controle_dot2_position)
+    
+    def quadratic_bezier(self,dots,t):
+        
+        x_final = (1 -t)**2 * dots[0] + (1 -t)*2 * t * dots[0] + t*t * dots[0]
+        y_final = (1 -t)**2 * dots[1] + (1 -t)*2 * t * dots[1] + t*t * dots[1]
 
-            dot = Dot(mouse_position, self.dot_color, self.dot_radis)
-
-            self.dots.append(controle_dot1)
-            self.dots.append(controle_dot2)
-            self.dots.append(dot)
+        return [x_final,y_final]
 
     def cubic_bezier(self,dots,t) -> list:
         
-        x_final = (1 -t) ** 3 * dots[0].position_x + 3 * t *(1-t) ** 2 * dots[1].position_x + 3 * t ** 2 *(1-t) * dots[2].position_x + t ** 3 * dots[3].position_x
+        x_final = (1 -t) **3 * dots[0].position_x + 3*t * (1-t)**2 * dots[1].position_x + 3 * t**2 *(1-t) * dots[2].position_x + t**3 * dots[3].position_x
         
-        y_final = (1 -t) ** 3 * dots[0].position_y + 3 * t *(1-t) ** 2 * dots[1].position_y + 3 * t ** 2 *(1-t) * dots[2].position_y + t ** 3 * dots[3].position_y
+        y_final = (1 -t) **3 * dots[0].position_y + 3*t * (1-t)**2 * dots[1].position_y + 3 * t**2 *(1-t) * dots[2].position_y + t**3 * dots[3].position_y
 
         return [x_final,y_final]
 
@@ -97,12 +124,10 @@ class BezierPath:
         t = 0
         next_t =0.01
   
-
-        for i,_ in  enumerate(self.dots):
-
-            if i * 3  >= self.number_of_dots - 1 : break
+        for i,_ in enumerate(self.dots):
+            if i*3  >= self.number_of_dots - 1 : break
             
-            dots_segment =[self.dots[i * 3], self.dots[i * 3 + 1] , self.dots[i * 3 + 2], self.dots[i * 3 + 3]]
+            dots_segment =[self.dots[i*3], self.dots[i*3 + 1] , self.dots[i*3 + 2], self.dots[i*3 + 3]]
             t = 0
             next_t = Q
             while(t_max > next_t):
@@ -112,13 +137,13 @@ class BezierPath:
                 next_t += Q
                 self.bezier_path.append(point)
                 self.bezier_path.append(next_point)
-            if i * 3 + 3  >= self.number_of_dots - 1 : break
+            if i*3 + 3  >= self.number_of_dots - 1 : break
 
 
-    def draw_bezier_path(self, surface, t_max, Q, show_guidelines) -> None:
+    def draw_bezier_path(self, surface, t_max, Q) -> None:
 
         self.generate_path(t_max, Q)
-        numebr_of_poitns = len(self.bezier_path) -1
+        numebr_of_poitns = len(self.bezier_path) - 1
 
         for point_index in range(numebr_of_poitns):
             point = self.bezier_path[point_index]
@@ -128,15 +153,17 @@ class BezierPath:
     def draw_guidelines(self,surface)-> None:
         for i,_ in enumerate(self.dots):
             if i * 3  >= self.number_of_dots - 1 : break
-            dots_segment =[self.dots[i * 3], self.dots[i * 3 + 1] , self.dots[i * 3 + 2], self.dots[i * 3 + 3]]
+            dots_segment =[self.dots[i*3], self.dots[i*3 + 1] , self.dots[i*3 + 2], self.dots[i*3 + 3]]
             pygame.draw.line(surface, (0,255,0), dots_segment[0].position, dots_segment[1].position)
             pygame.draw.line(surface, (0,255,0), dots_segment[2].position, dots_segment[3].position) 
             if i * 3 + 3  >= self.number_of_dots - 1 : break
            
 
     def update(self, surface, mouse_position, t_max, Q, show_guidelines,show_dots) -> None:
-         self.draw_bezier_path(surface, t_max, Q, show_guidelines)
+         self.draw_bezier_path(surface, t_max, Q)
+
          if show_guidelines: self.draw_guidelines(surface)
+
          self.dots_update(surface, mouse_position,show_dots)
          self.number_of_dots = len( self.dots)
          
